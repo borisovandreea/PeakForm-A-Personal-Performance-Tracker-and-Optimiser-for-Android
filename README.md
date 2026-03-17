@@ -41,8 +41,8 @@ To add data to your dashboard:
 ---
 
 ## MVP Status
-- [x] Data Entry System
-- [x] Transparent Weighted Scoring
-- [x] Visual Performance History (Chart)
-- [x] Persistent Storage (Data stays after app close)
+- Data Entry System
+- Transparent Weighted Scoring
+- Visual Performance History 
+- Persistent Storage
 
