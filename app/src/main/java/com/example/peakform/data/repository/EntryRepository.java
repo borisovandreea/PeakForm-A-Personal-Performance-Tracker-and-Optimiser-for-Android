@@ -1,31 +1,31 @@
 package com.example.peakform.data.repository;
 
 import android.app.Application;
-
 import androidx.lifecycle.LiveData;
-
 import com.example.peakform.data.dao.EntryDao;
-import com.example.peakform.data.database.PeakFormDatabase;
 import com.example.peakform.data.entity.Entry;
-
+import com.example.peakform.data.database.PeakFormDatabase; // Verify your DB class name here
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class EntryRepository {
-    private final EntryDao entryDao;
-    private final ExecutorService executor = Executors.newSingleThreadExecutor();
+    private EntryDao entryDao;
+    private LiveData<List<Entry>> allEntries;
 
     public EntryRepository(Application application) {
-        PeakFormDatabase db = PeakFormDatabase.getInstance(application);
-        entryDao = db.entryDao();
+        PeakFormDatabase pfd = PeakFormDatabase.getDatabase(application);
+        entryDao = pfd.entryDao();
+        allEntries = entryDao.getAllEntries();
     }
+
+    public LiveData<List<Entry>> getAllEntries() { return allEntries; }
 
     public void insert(Entry entry) {
-        executor.execute(() -> entryDao.insert(entry));
+        PeakFormDatabase.databaseWriteExecutor.execute(() -> entryDao.insert(entry));
     }
 
-    public LiveData<List<Entry>> getAllEntries() {
-        return entryDao.getAllEntries();
+    public void deleteAll() {
+        PeakFormDatabase.databaseWriteExecutor.execute(() -> {
+            entryDao.deleteAll();
+        });
     }
 }

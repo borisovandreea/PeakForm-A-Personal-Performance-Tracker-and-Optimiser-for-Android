@@ -1,31 +1,54 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/main"
-    android:orientation="vertical"
-    android:padding="24dp"
-    android:gravity="center"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="20dp"
+    android:background="#FDFDFD">
 
     <TextView
-        android:id="@+id/title"
-        android:text="PeakForm"
-        android:textSize="24sp"
-        android:layout_marginBottom="24dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Life Balance Score"
+        android:gravity="center"
+        android:textAllCaps="true"
+        android:letterSpacing="0.1"
+        android:textColor="#666666"/>
 
     <TextView
-        android:id="@+id/entryCount"
-        android:text="Entries: 0"
-        android:textSize="18sp"
-        android:layout_marginBottom="24dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:id="@+id/text_performance_score"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="0"
+        android:textSize="80sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:textColor="#6200EE" />
+
+    <com.github.mikephil.charting.charts.HorizontalBarChart
+        android:id="@+id/performance_chart"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginTop="16dp"
+        android:background="#FFFFFF" />
 
     <Button
-        android:id="@+id/addEntryButton"
-        android:text="Add Entry"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:id="@+id/button_add_another"
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:text="ADD ANOTHER ACTIVITY"
+        android:layout_marginTop="16dp"
+        android:backgroundTint="#6200EE"
+        android:textColor="#FFFFFF"
+        android:textStyle="bold"
+        android:elevation="4dp"/>
+
+    <Button
+        android:id="@+id/button_clear"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Reset Dashboard"
+        style="@style/Widget.AppCompat.Button.Borderless"
+        android:textColor="#999999"/>
 
 </LinearLayout>

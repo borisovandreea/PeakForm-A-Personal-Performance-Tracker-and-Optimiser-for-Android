@@ -1,42 +1,30 @@
 package com.example.peakform.data.database;
 
 import android.content.Context;
-
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
-
 import com.example.peakform.data.dao.EntryDao;
-import com.example.peakform.data.entity.Domain;
 import com.example.peakform.data.entity.Entry;
-import com.example.peakform.data.entity.FeedbackEvent;
-import com.example.peakform.data.entity.Goal;
-import com.example.peakform.data.entity.ScoreSnapshot;
-import com.example.peakform.data.entity.WeightProfile;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
-@Database(
-        entities = {
-                Entry.class,
-                Domain.class,
-                Goal.class,
-                WeightProfile.class,
-                ScoreSnapshot.class,
-                FeedbackEvent.class
-        },
-        version = 1
-)
+@Database(entities = {Entry.class}, version = 4, exportSchema = false) // Upgraded version
 public abstract class PeakFormDatabase extends RoomDatabase {
-    private static PeakFormDatabase INSTANCE;
-
     public abstract EntryDao entryDao();
+    private static volatile PeakFormDatabase INSTANCE;
+    public static final ExecutorService databaseWriteExecutor = Executors.newFixedThreadPool(4);
 
-    public static synchronized PeakFormDatabase getInstance(Context context) {
+    public static PeakFormDatabase getDatabase(final Context context) {
         if (INSTANCE == null) {
-            INSTANCE = Room.databaseBuilder(
-                    context.getApplicationContext(),
-                    PeakFormDatabase.class,
-                    "peakform_db"
-            ).build();
+            synchronized (PeakFormDatabase.class) {
+                if (INSTANCE == null) {
+                    INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
+                                    PeakFormDatabase.class, "peakform_db")
+                            .fallbackToDestructiveMigration() // THIS PREVENTS THE CRASH
+                            .build();
+                }
+            }
         }
         return INSTANCE;
     }

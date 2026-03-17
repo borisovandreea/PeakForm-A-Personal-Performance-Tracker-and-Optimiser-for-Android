@@ -1,46 +1,52 @@
 package com.example.peakform.ui.entry;
 
 import android.os.Bundle;
-import android.widget.Button;
-import android.widget.EditText;
-
+import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
-
 import com.example.peakform.R;
 import com.example.peakform.data.entity.Entry;
 import com.example.peakform.viewmodel.EntryViewModel;
 
 public class AddEntryActivity extends AppCompatActivity {
-    private EntryViewModel viewModel;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_entry);
 
-        viewModel = new ViewModelProvider(this).get(EntryViewModel.class);
+        EntryViewModel viewModel = new ViewModelProvider(this).get(EntryViewModel.class);
 
-        EditText valueInput = findViewById(R.id.valueInput);
-        Button saveButton = findViewById(R.id.saveButton);
+        Button btnSave = findViewById(R.id.button_save);
+        EditText etName = findViewById(R.id.edit_activity_name);
+        EditText etGoal = findViewById(R.id.edit_goal_minutes);
+        EditText etActual = findViewById(R.id.edit_actual_minutes);
+        SeekBar skQual = findViewById(R.id.seek_quality);
+        SeekBar skWeight = findViewById(R.id.seek_weight);
+        Spinner spDomain = findViewById(R.id.spinner_domain);
 
-        saveButton.setOnClickListener(v -> {
+        String[] domains = {"Work", "Study", "Exercise", "Health", "Social"};
+        if (spDomain != null) {
+            spDomain.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, domains));
+        }
 
-            String valueText = valueInput.getText().toString().trim();
+        if (btnSave != null) {
+            btnSave.setOnClickListener(v -> {
+                try {
+                    String name = etName.getText().toString();
+                    float goal = Float.parseFloat(etGoal.getText().toString());
+                    float actual = Float.parseFloat(etActual.getText().toString());
+                    float weight = (skWeight != null) ? skWeight.getProgress() / 100f : 0.5f;
+                    float quality = (skQual != null) ? (float)skQual.getProgress() : 5f;
 
-            if (valueText.isEmpty()) {
-                valueInput.setError("Enter a value");
-                return;
-            }
+                    Entry entry = new Entry(name, spDomain.getSelectedItem().toString(),
+                            actual, goal, quality, weight, System.currentTimeMillis());
 
-            Entry entry = new Entry();
-            entry.domainId = 1; // temporary
-            entry.value = Float.parseFloat(valueText);
-            entry.timestamp = System.currentTimeMillis();
-            entry.qualityFlag = true;
-
-            viewModel.addEntry(entry);
-            finish();
-        });
+                    viewModel.insert(entry);
+                    finish();
+                } catch (Exception e) {
+                    Toast.makeText(this, "Please enter valid numbers for Goal and Actual", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
     }
 }
